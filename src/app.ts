@@ -1,9 +1,10 @@
-// Project Type
+// -- Project Status Enum
 enum ProjectStatus {
   Active,
   Finished,
 }
 
+// -- Project Type
 // This defines the structure of a project.
 // We are using a class instead of an interface because we want to be able to instantiate objects.
 class Project {
@@ -16,9 +17,10 @@ class Project {
   ) {}
 }
 
-// Function type
+// -- Listener Type
 type Listener<T> = (items: T[]) => void;
 
+// -- State Class
 class State<T> {
   protected listeners: Listener<T>[] = [];
 
@@ -27,7 +29,7 @@ class State<T> {
   }
 }
 
-//ANCHOR - Project State Management
+// -- Project State Management
 class ProjectState extends State<Project> {
   private projects: Project[] = [];
   private static instance: ProjectState;
@@ -60,11 +62,10 @@ class ProjectState extends State<Project> {
   }
 }
 
-// Global instance of ProjectState
+// -- Global instance of Project State
 const projectState = ProjectState.getInstance();
 
-//SECTION - Validation
-
+// -- Validation Interface
 interface Validatable {
   value: string | number;
   required?: boolean;
@@ -74,6 +75,7 @@ interface Validatable {
   max?: number;
 }
 
+// -- Validation Function
 function validate(validatableInput: Validatable) {
   let isValid = true;
   if (validatableInput.required) {
@@ -107,9 +109,8 @@ function validate(validatableInput: Validatable) {
   }
   return isValid;
 }
-// !SECTION
 
-//ANCHOR - Autobind Decorator
+// -- Autobind Decorator
 // Autobind decorator: Method decorator: (binds "this" to the class)
 function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
@@ -123,7 +124,7 @@ function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
-//ANCHOR - Component Base Class
+// -- Component Base Class
 // This class does all the heavy lifting of creating a component.
 abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement;
@@ -133,8 +134,8 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   constructor(
     templateId: string,
     hostElementId: string,
-    newElementId?: string,
-    insertAtStart?: boolean
+    insertAtStart: boolean,
+    newElementId?: string
   ) {
     this.templateElement = <HTMLTemplateElement>(
       document.getElementById(templateId)!
@@ -164,12 +165,36 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 
-// ANCHOR - ProjectList Class
+// -- ProjectItem Class
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+  private project: Project;
+
+  constructor(hostId: string, project: Project) {
+    super("single-project", hostId, false, project.id);
+    this.project = project;
+
+    this.configure();
+    this.renderContent();
+  }
+
+  configure(): void {}
+
+  renderContent() {
+    console.log("this.element: ", this.element);
+    console.log("this.project.title: ", this.project.title);
+    this.element.querySelector("h2")!.textContent = this.project.title;
+    this.element.querySelector("h3")!.textContent =
+      this.project.people.toString();
+    this.element.querySelector("p")!.textContent = this.project.description;
+  }
+}
+
+// -- ProjectList Class
 class ProjectList extends Component<HTMLDivElement, HTMLElement> {
   assignedProjects: Project[];
 
   constructor(private type: "active" | "finished" = "active") {
-    super("project-list", "app", `${type}-projects`, false);
+    super("project-list", "app", false, `${type}-projects`);
 
     this.assignedProjects = [];
     this.element.id = `${this.type}-projects`;
@@ -204,14 +229,12 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     )! as HTMLUListElement;
     listEl.innerHTML = "";
     for (const prjItem of this.assignedProjects) {
-      const listItem = document.createElement("li");
-      listItem.textContent = prjItem.title;
-      listEl.appendChild(listItem);
+      new ProjectItem(this.element.querySelector("ul")!.id, prjItem);
     }
   }
 }
 
-//SECTION - ProjectInput Class
+// -- ProjectInput Class
 // This class defines the form for adding a new project
 class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
@@ -220,7 +243,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
 
   // Get DOM elements (from within <template>), configure and render to DOM
   constructor() {
-    super("project-input", "app", "user-input", true);
+    super("project-input", "app", true, "user-input");
     this.titleInputElement = this.element.querySelector(
       "#title"
     ) as HTMLInputElement;
@@ -297,8 +320,15 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
 
   renderContent(): void {}
 }
-// !SECTION
 
+// -- Instantiate classes
 const prjInput = new ProjectInput();
 const activePrjList = new ProjectList("active");
 const finishedPrjList = new ProjectList("finished");
+
+// NOTE cow
+// TODO cow
+// FIXME cow
+// STUB cow
+// SECTION cow
+// !SECTION cow
