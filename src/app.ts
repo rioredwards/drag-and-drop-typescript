@@ -1,3 +1,16 @@
+// Autobind decorator: Method decorator: (binds "this" to the class)
+function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return adjDescriptor;
+}
+
 // This class defines the form for adding a new project
 class ProjectInput {
   templateElement: HTMLTemplateElement;
@@ -37,6 +50,7 @@ class ProjectInput {
 
   // Triggers when form submitted
   // Broken because "this" is not bound to the class when called by eventListener
+  @Autobind
   private submitHandler(event: Event) {
     event.preventDefault();
     console.log(this.titleInputElement.value);
@@ -44,7 +58,7 @@ class ProjectInput {
 
   // Configure event listeners
   private configure() {
-    this.element.addEventListener("submit", this.submitHandler.bind(this));
+    this.element.addEventListener("submit", this.submitHandler);
   }
 
   // Attach to DOM
