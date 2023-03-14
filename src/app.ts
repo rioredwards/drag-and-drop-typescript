@@ -48,6 +48,25 @@ class ProjectInput {
     this.attach();
   }
 
+  // Called on submit to gather user input from all fields
+  // Return type is a tuple
+  private gatherUserInput(): [string, string, number] | void {
+    const enteredTitle = this.titleInputElement.value;
+    const enteredDescription = this.descriptionInputElement.value;
+    const enteredPeople = this.peopleInputElement.value;
+
+    if (
+      enteredTitle.trim().length === 0 ||
+      enteredDescription.trim().length === 0 ||
+      enteredPeople.trim().length === 0
+    ) {
+      alert("Invalid input, please try again!");
+      return;
+    } else {
+      return [enteredTitle, enteredDescription, +enteredPeople];
+    }
+  }
+
   // Triggers when form submitted
   // Broken because "this" is not bound to the class when called by eventListener
   @Autobind
