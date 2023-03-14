@@ -1,4 +1,4 @@
-# Shopping Redux
+# Drag and Drop Project Management App
 
 A simple app for keeping track of projects. This was a practice project for learning Typescript. It was made by following this tutorial on Udemy: https://www.udemy.com/course/understanding-typescript/learn/lecture/16935782#content
 
