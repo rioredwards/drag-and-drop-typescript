@@ -67,12 +67,23 @@ class ProjectInput {
     }
   }
 
+  private clearInputs() {
+    this.titleInputElement.value = "";
+    this.descriptionInputElement.value = "";
+    this.peopleInputElement.value = "";
+  }
+
   // Triggers when form submitted
   // Broken because "this" is not bound to the class when called by eventListener
   @Autobind
   private submitHandler(event: Event) {
     event.preventDefault();
-    console.log(this.titleInputElement.value);
+    const userInput = this.gatherUserInput();
+    // Check if userInput is a tuple (a.k.a. array)
+    if (Array.isArray(userInput)) {
+      const [title, desc, people] = userInput;
+      console.log(title, desc, people);
+    }
   }
 
   // Configure event listeners
