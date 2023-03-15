@@ -1,7 +1,7 @@
-import * as validation from "../utils/validation.js";
-import Cmp from "./base-component.js";
-import { projectState } from "../state/project-state.js";
-import { Autobind as autobind } from "../decorators/autobind.js";
+import * as validation from "../utils/validation";
+import Cmp from "./base-component";
+import { projectState } from "../state/project-state";
+import { Autobind as autobind } from "../decorators/autobind";
 
 // -- ProjectInput Class
 // This class defines the form for adding a new project
