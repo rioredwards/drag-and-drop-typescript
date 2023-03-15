@@ -68,6 +68,18 @@ class ProjectState extends State<Project> {
       ProjectStatus.Active
     );
     this.projects.push(newProject);
+    this.updateListeners();
+  }
+
+  moveProject(projectId: string, newStatus: ProjectStatus) {
+    const project = this.projects.find((prj) => prj.id === projectId);
+    if (project && project.status !== newStatus) {
+      project.status = newStatus;
+      this.updateListeners();
+    }
+  }
+
+  private updateListeners() {
     for (const listenerFn of this.listeners) {
       listenerFn(this.projects.slice());
     }
@@ -207,18 +219,15 @@ class ProjectItem
   }
 
   dragEndHandler(_: DragEvent) {
-    console.log("DragEnd");
+    // STUB - Not used
   }
 
   configure() {
-    console.log("this.element: ", this.element);
     this.element.addEventListener("dragstart", this.dragStartHandler);
     this.element.addEventListener("dragend", this.dragEndHandler);
   }
 
   renderContent() {
-    console.log("this.element: ", this.element);
-    console.log("this.project.title: ", this.project.title);
     this.element.querySelector("h2")!.textContent = this.project.title;
     this.element.querySelector("h3")!.textContent = this.persons + " assigned";
     this.element.querySelector("p")!.textContent = this.project.description;
@@ -253,7 +262,11 @@ class ProjectList
 
   @Autobind
   dropHandler(event: DragEvent) {
-    console.log(event.dataTransfer!.getData("text/plain"));
+    const prjId = event.dataTransfer!.getData("text/plain");
+    projectState.moveProject(
+      prjId,
+      this.type === "active" ? ProjectStatus.Active : ProjectStatus.Finished
+    );
   }
 
   @Autobind
@@ -375,7 +388,6 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     // Check if userInput is a tuple (a.k.a. array)
     if (Array.isArray(userInput)) {
       const [title, desc, people] = userInput;
-      console.log(title, desc, people);
       projectState.addProject(title, desc, people);
       this.clearInputs();
     }
