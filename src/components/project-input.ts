@@ -1,11 +1,11 @@
-import { Validatable, validate } from "../utils/validation.js";
-import { Component } from "./base-component.js";
+import * as validation from "../utils/validation.js";
+import Cmp from "./base-component.js";
 import { projectState } from "../state/project-state.js";
-import { Autobind } from "../decorators/autobind.js";
+import { Autobind as autobind } from "../decorators/autobind.js";
 
 // -- ProjectInput Class
 // This class defines the form for adding a new project
-export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
+export class ProjectInput extends Cmp<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLTextAreaElement;
   peopleInputElement: HTMLInputElement;
@@ -38,16 +38,16 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
 
-    const titleValidatable: Validatable = {
+    const titleValidatable: validation.Validatable = {
       value: enteredTitle,
       required: true,
     };
-    const descriptionValidatable: Validatable = {
+    const descriptionValidatable: validation.Validatable = {
       value: enteredDescription,
       required: true,
       minLength: 5,
     };
-    const peopleValidatable: Validatable = {
+    const peopleValidatable: validation.Validatable = {
       value: +enteredPeople,
       required: true,
       min: 1,
@@ -55,9 +55,9 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     };
 
     if (
-      !validate(titleValidatable) ||
-      !validate(descriptionValidatable) ||
-      !validate(peopleValidatable)
+      !validation.validate(titleValidatable) ||
+      !validation.validate(descriptionValidatable) ||
+      !validation.validate(peopleValidatable)
     ) {
       alert("Invalid input, please try again!");
       return;
@@ -74,7 +74,7 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
 
   // Triggers when form submitted
   // Broken because "this" is not bound to the class when called by eventListener
-  @Autobind
+  @autobind
   private submitHandler(event: Event) {
     event.preventDefault();
     const userInput = this.gatherUserInput();
